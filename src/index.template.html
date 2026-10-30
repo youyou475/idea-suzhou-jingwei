@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>经纬二重 · 苏州缂丝与纱罗的数字演化</title>
+</head>
+<body>
+<div id="wrap">
+<div id="stage">
+
+  <section class="page" id="p1">
+    <div class="vtitle serif">经纬二重</div>
+    <div class="quote serif">一寸缂丝一寸金</div>
+    <div class="sub" style="margin-top:16px">苏州缂丝与纱罗的数字演化</div>
+    <div class="meta">2026 IDEA苏州 · 赛道二 · 非遗新生</div>
+  </section>
+
+  <section class="page" id="p2">
+    <div class="kicker">P2 / 释义</div>
+    <h2 class="serif">先看懂这两根线</h2>
+    <div class="rule"></div>
+    <div class="toggle" id="tog"><div class="act">通经</div><div>断纬</div></div>
+    <div class="hint" style="margin:0 0 12px">点选任一项，可听该技艺的语音讲解</div>
+    <canvas class="diagram" id="diagram"></canvas>
+    <div class="note">缂丝之要，全在<b>通经断纬</b>四字：经线一根到底，纬线却按图稿色区各自回梭，互不相通。色界处遂留下细缝——这道缝，正是行家辨真伪的凭据。</div>
+  </section>
+
+  <section class="page" id="p3">
+    <div class="kicker">P3 / 择样</div>
+    <h2 class="serif">选一幅今日要织的样</h2>
+    <div class="rule"></div>
+    <div class="sub">四样皆由算法依参数生成，换一手便换一局。</div>
+    <div class="grid2" id="picks"></div>
+    <div class="btnrow"><span class="btn" id="btnReseed">换一手</span></div>
+  </section>
+
+  <section class="page" id="p4">
+    <div class="kicker">P4 / 掷色</div>
+    <h2 class="serif">掷一手丝色</h2>
+    <div class="rule"></div>
+    <div class="sub">六组色卡取自缂丝与宋锦常用的传统丝色，掷得哪一手便织哪一色。</div>
+    <div class="swatches" id="sws"></div>
+    <div class="btnrow"><span class="btn solid" id="btnCast">掷色</span></div>
+  </section>
+
+  <section class="page" id="p5">
+    <div class="kicker">P5 / 上机</div>
+    <h2 class="serif">引梭成纹</h2>
+    <canvas id="loom"></canvas>
+    <div class="prow"><div class="pbar"><i id="pbar"></i></div><div class="pnum" id="pnum">0 / 0 梭</div></div>
+    <div class="btnrow">
+      <span class="btn" id="btnAuto">替我织</span>
+      <span class="btn" id="btnFlip">翻面</span>
+      <span class="btn" id="btnReset">重织</span>
+    </div>
+    <div class="hint" id="hint">按住画布横向拖动，引梭织入</div>
+  </section>
+
+  <section class="page" id="p6">
+    <div class="kicker">P6 / 互文</div>
+    <h2 class="serif">同一根线的另一种解法</h2>
+    <div class="rule"></div>
+    <canvas id="luo"></canvas>
+    <div class="hint" id="luoTxt">半绞 · 孔眼匀停</div>
+    <div class="quote2">缂丝在纬上做减法，纱罗却在经上做加法：两根经线互相绞转，把纬线锁成稳定的方孔，谓之<b>椒孔</b>。左右拖动，可试绞转之紧慢。
+      <span class="src">——技艺互文 · 苏州纱罗织造</span>
+    </div>
+  </section>
+
+  <section class="page" id="p7">
+    <div class="kicker">P7 / 成画</div>
+    <h2 class="serif">这一幅，只此一幅</h2>
+    <canvas id="final"></canvas>
+    <div style="text-align:center;font-size:15px;color:#7A7266;margin-top:10px" id="fname"></div>
+    <div class="mock">
+      <div><div class="box"><img alt="丝巾"></div><p>丝巾</p></div>
+      <div><div class="box round"><img alt="团扇"></div><p>团扇</p></div>
+      <div><div class="box"><img alt="书衣"></div><p>书衣</p></div>
+    </div>
+    <div class="btnrow"><span class="btn solid" id="btnSave">存成图</span><span class="btn" id="btnAgain">再织一幅</span></div>
+  </section>
+
+  <div id="pager"></div>
+  <div id="prev"></div>
+  <div id="nav"></div>
+  <div id="sound" class="off">&#9834;</div>
+</div>
+</div>
+</body>
+</html>
