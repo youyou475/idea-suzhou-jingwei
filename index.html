@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>经纬二重 · 苏州缂丝与纱罗的数字演化</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: #E6DFD1;
+  overflow: hidden;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #2A2723;
+  user-select: none;
+}
+
+#wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+
+#stage {
+  position: relative;
+  width: 640px; height: 1008px;
+  transform-origin: center center;
+  background: #F7F2E8;
+  overflow: hidden;
+  box-shadow: 0 12px 44px rgba(0, 0, 0, .16);
+}
+
+/* 纸面经线底纹 */
+#stage::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 1px, transparent 1px 9px);
+  pointer-events: none;
+}
+
+.page {
+  position: absolute; inset: 0;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s ease;
+  display: flex; flex-direction: column;
+  padding: 52px 44px 96px;
+}
+.page.on { opacity: 1; pointer-events: auto; }
+body.nost .page { transition: none; }
+
+.serif { font-family: "Songti SC", "STSong", "SimSun", serif; }
+
+.kicker { font-size: 15px; letter-spacing: .34em; color: #9A9184; margin-bottom: 14px; }
+h1 { font-size: 46px; font-weight: 600; letter-spacing: .1em; line-height: 1.15; }
+h2 { font-size: 30px; font-weight: 600; letter-spacing: .06em; margin-bottom: 6px; }
+.sub { font-size: 17px; color: #7A7266; line-height: 1.7; letter-spacing: .04em; }
+.rule { width: 46px; height: 2px; background: #8E3B45; margin: 18px 0 22px; }
+
+/* 封面 */
+#p1 { justify-content: center; align-items: center; text-align: center; padding-bottom: 52px; }
+#p1 .vtitle { writing-mode: vertical-rl; font-size: 68px; letter-spacing: .22em; margin-bottom: 26px; }
+#p1 .quote { font-size: 19px; color: #8E3B45; letter-spacing: .18em; margin-top: 10px; }
+#p1 .meta { position: absolute; bottom: 54px; font-size: 14px; color: #A79E90; letter-spacing: .2em; }
+
+/* 释义页 */
+.toggle { display: flex; border: 1px solid #C9C0AE; border-radius: 26px; overflow: hidden; width: 300px; margin: 8px 0 20px; }
+.toggle div { flex: 1; text-align: center; padding: 11px 0; font-size: 17px; color: #8A8274; cursor: pointer; }
+.toggle div.act { background: #2A2723; color: #F7F2E8; }
+.diagram { width: 552px; height: 300px; background: #FFFDF7; border: 1px solid #DED5C2; border-radius: 6px; }
+.note { margin-top: 20px; font-size: 17px; line-height: 1.8; color: #5C564C; }
+.note b { color: #8E3B45; font-weight: 600; }
+
+/* 择样 / 掷色 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+.card { background: #FFFDF7; border: 2px solid #DED5C2; border-radius: 8px; padding: 10px; cursor: pointer; }
+.card.act { border-color: #8E3B45; }
+.card canvas { display: block; margin: 0 auto; border-radius: 4px; }
+.card .nm { font-size: 17px; margin-top: 8px; }
+.card .nt { font-size: 13px; color: #9A9184; margin-top: 2px; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 8px; }
+.sw { width: 92px; border: 2px solid transparent; border-radius: 6px; padding: 5px; cursor: pointer; }
+.sw.act { border-color: #2A2723; }
+.sw .bar { display: flex; height: 34px; border-radius: 4px; overflow: hidden; }
+.sw .bar i { flex: 1; }
+.sw .nm { font-size: 14px; text-align: center; margin-top: 6px; color: #6E675C; }
+
+/* 织造页 */
+#p5 { padding-bottom: 88px; }
+#loom { width: 460px; height: 580px; margin: 0 auto; display: block; background: #FFFDF7; border: 1px solid #DED5C2; border-radius: 6px; touch-action: none; cursor: ew-resize; }
+.prow { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+.pbar { flex: 1; height: 6px; background: #E3DBC9; border-radius: 3px; overflow: hidden; }
+.pbar i { display: block; height: 100%; width: 0; background: #8E3B45; transition: width .12s linear; }
+.pnum { font-size: 15px; color: #7A7266; min-width: 92px; text-align: right; }
+.hint { margin-top: 12px; font-size: 16px; color: #8A8274; text-align: center; letter-spacing: .06em; }
+
+/* 苏罗页 */
+#p6 #luo { width: 552px; height: 300px; background: #FFFDF7; border: 1px solid #DED5C2; border-radius: 6px; touch-action: none; }
+.quote2 { margin-top: 16px; padding: 14px 16px; border-left: 3px solid #8E3B45; background: rgba(142,59,69,.05); font-size: 16px; line-height: 1.75; color: #5C564C; }
+.quote2 .src { display: block; margin-top: 8px; font-size: 13px; color: #9A9184; }
+
+/* 成画页 */
+#p7 #final { width: 345px; height: 435px; margin: 0 auto; display: block; background: #FFFDF7; border: 1px solid #DED5C2; border-radius: 4px; }
+.mock { display: flex; gap: 14px; margin-top: 14px; }
+.mock div { flex: 1; }
+.mock .box { height: 116px; background: #EFE8D8; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.mock .box img { max-width: 86%; max-height: 86%; object-fit: contain; }
+.mock .box.round { border-radius: 999px; }
+.mock .box.round img { border-radius: 999px; max-width: 78%; max-height: 78%; }
+.mock p { font-size: 14px; text-align: center; color: #7A7266; margin-top: 8px; }
+
+/* 按钮 */
+.btn {
+  display: inline-block; padding: 13px 30px; font-size: 17px; letter-spacing: .12em;
+  border: 1px solid #2A2723; border-radius: 30px; cursor: pointer; background: transparent; color: #2A2723;
+}
+.btn.solid { background: #2A2723; color: #F7F2E8; }
+.btn:active { opacity: .7; }
+.btnrow { display: flex; gap: 12px; margin-top: 16px; }
+
+/* 翻页器 */
+#pager { position: absolute; left: 0; right: 0; bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 8px; z-index: 5; }
+#pager i { width: 7px; height: 7px; border-radius: 50%; background: #C9C0AE; display: block; }
+#pager i.act { background: #8E3B45; width: 20px; border-radius: 4px; }
+#nav { position: absolute; bottom: 26px; right: 30px; font-size: 15px; color: #A79E90; z-index: 5; cursor: pointer; }
+#prev { position: absolute; bottom: 26px; left: 30px; font-size: 15px; color: #A79E90; z-index: 5; cursor: pointer; }
+#nav:empty, #prev:empty { display: none; }
+#nav:active, #prev:active { color: #8E3B45; }
+
+#sound {
+  position: absolute; top: 26px; right: 30px; z-index: 6; cursor: pointer;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid #C9C0AE; background: rgba(255, 253, 247, .78);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: #2A2723;
+}
+#sound.off { color: #B9B0A0; text-decoration: line-through; }
+
+.foot { position: absolute; bottom: 30px; left: 44px; font-size: 13px; color: #B3AA9B; letter-spacing: .14em; }
+
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="stage">
+
+  <section class="page" id="p1">
+    <div class="vtitle serif">经纬二重</div>
+    <div class="quote serif">一寸缂丝一寸金</div>
+    <div class="sub" style="margin-top:16px">苏州缂丝与纱罗的数字演化</div>
+    <div class="meta">2026 IDEA苏州 · 赛道二 · 非遗新生</div>
+  </section>
+
+  <section class="page" id="p2">
+    <div class="kicker">P2 / 释义</div>
+    <h2 class="serif">先看懂这两根线</h2>
+    <div class="rule"></div>
+    <div class="toggle" id="tog"><div class="act">通经</div><div>断纬</div></div>
+    <div class="hint" style="margin:0 0 12px">点选任一项，可听该技艺的语音讲解</div>
+    <canvas class="diagram" id="diagram"></canvas>
+    <div class="note">缂丝之要，全在<b>通经断纬</b>四字：经线一根到底，纬线却按图稿色区各自回梭，互不相通。色界处遂留下细缝——这道缝，正是行家辨真伪的凭据。</div>
+  </section>
+
+  <section class="page" id="p3">
+    <div class="kicker">P3 / 择样</div>
+    <h2 class="serif">选一幅今日要织的样</h2>
+    <div class="rule"></div>
+    <div class="sub">四样皆由算法依参数生成，换一手便换一局。</div>
+    <div class="grid2" id="picks"></div>
+    <div class="btnrow"><span class="btn" id="btnReseed">换一手</span></div>
+  </section>
+
+  <section class="page" id="p4">
+    <div class="kicker">P4 / 掷色</div>
+    <h2 class="serif">掷一手丝色</h2>
+    <div class="rule"></div>
+    <div class="sub">六组色卡取自缂丝与宋锦常用的传统丝色，掷得哪一手便织哪一色。</div>
+    <div class="swatches" id="sws"></div>
+    <div class="btnrow"><span class="btn solid" id="btnCast">掷色</span></div>
+  </section>
+
+  <section class="page" id="p5">
+    <div class="kicker">P5 / 上机</div>
+    <h2 class="serif">引梭成纹</h2>
+    <canvas id="loom"></canvas>
+    <div class="prow"><div class="pbar"><i id="pbar"></i></div><div class="pnum" id="pnum">0 / 0 梭</div></div>
+    <div class="btnrow">
+      <span class="btn" id="btnAuto">替我织</span>
+      <span class="btn" id="btnFlip">翻面</span>
+      <span class="btn" id="btnReset">重织</span>
+    </div>
+    <div class="hint" id="hint">按住画布横向拖动，引梭织入</div>
+  </section>
+
+  <section class="page" id="p6">
+    <div class="kicker">P6 / 互文</div>
+    <h2 class="serif">同一根线的另一种解法</h2>
+    <div class="rule"></div>
+    <canvas id="luo"></canvas>
+    <div class="hint" id="luoTxt">半绞 · 孔眼匀停</div>
+    <div class="quote2">缂丝在纬上做减法，纱罗却在经上做加法：两根经线互相绞转，把纬线锁成稳定的方孔，谓之<b>椒孔</b>。左右拖动，可试绞转之紧慢。
+      <span class="src">——技艺互文 · 苏州纱罗织造</span>
+    </div>
+  </section>
+
+  <section class="page" id="p7">
+    <div class="kicker">P7 / 成画</div>
+    <h2 class="serif">这一幅，只此一幅</h2>
+    <canvas id="final"></canvas>
+    <div style="text-align:center;font-size:15px;color:#7A7266;margin-top:10px" id="fname"></div>
+    <div class="mock">
+      <div><div class="box"><img alt="丝巾"></div><p>丝巾</p></div>
+      <div><div class="box round"><img alt="团扇"></div><p>团扇</p></div>
+      <div><div class="box"><img alt="书衣"></div><p>书衣</p></div>
+    </div>
+    <div class="btnrow"><span class="btn solid" id="btnSave">存成图</span><span class="btn" id="btnAgain">再织一幅</span></div>
+  </section>
+
+  <div id="pager"></div>
+  <div id="prev"></div>
+  <div id="nav"></div>
+  <div id="sound" class="off">&#9834;</div>
+</div>
+</div>
+<script>
+/* weave-pattern.js
+ * 《经纬二重》H5 · 纹样与色谱引擎
+ * 说明：全部几何形体与配色均由手写参数化算法生成（三角函数 + 伪随机分布），
+ *       不使用任何 AI 生成素材、不依赖任何外部图片资源。
+ * 数据契约：grid 为 W*H 的 Int8Array，值 -1 表示“地”（不落纬，露出经线），
+ *           0..N-1 表示色区索引，映射至配色方案的 lines 数组。
+ */
+
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.NHPattern = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var W = 46, H = 58;
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function set(g, x, y, v) {
+    x = Math.round(x); y = Math.round(y);
+    if (x < 0 || y < 0 || x >= W || y >= H) return;
+    g[y * W + x] = v;
+  }
+
+  function disc(g, cx, cy, r, v, aspect) {
+    aspect = aspect || 1;
+    var r2 = r * r;
+    for (var y = Math.floor(cy - r / aspect); y <= Math.ceil(cy + r / aspect); y++) {
+      for (var x = Math.floor(cx - r); x <= Math.ceil(cx + r); x++) {
+        var dx = x - cx, dy = (y - cy) * aspect;
+        if (dx * dx + dy * dy <= r2) set(g, x, y, v);
+      }
+    }
+  }
+
+  function ellipseFill(g, cx, cy, rx, ry, v, inner, innerV) {
+    for (var y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) {
+      for (var x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+        var dx = (x - cx) / rx, dy = (y - cy) / ry, d = dx * dx + dy * dy;
+        if (d <= 1) set(g, x, y, (inner && d <= inner) ? innerV : v);
+      }
+    }
+  }
+
+  /* ---------- 通用：底部海水江崖 ---------- */
+  function addWaves(g, rnd, top) {
+    var bands = 3, k = 2 * Math.PI / (W / (1.4 + rnd() * 1.4));
+    for (var b = 0; b < bands; b++) {
+      var base = top + (H - top) * (b / bands);
+      var amp = 1.6 + rnd() * 1.8;
+      var ph = rnd() * Math.PI * 2;
+      for (var x = 0; x < W; x++) {
+        var edge = base + amp * Math.sin(k * x + ph);
+        for (var y = Math.round(edge); y < Math.round(base + (H - top) / bands + 2); y++) {
+          if (y >= 0 && y < H) {
+            var cur = g[y * W + x];
+            if (cur === -1) set(g, x, y, 3 + (b % 2 ? 1 : 0));
+          }
+        }
+      }
+    }
+  }
+
+  /* ---------- 纹样一：宝相团花 ---------- */
+  /* 沿 ang 方向摆放一枚胖椭圆花瓣：主轴沿径向，副轴沿切向 */
+  function petalEllipse(g, px, py, ang, rl, tw, v, aspect) {
+    var ca = Math.cos(ang), sa = Math.sin(ang);
+    for (var y = Math.floor(py - rl) - 1; y <= Math.ceil(py + rl) + 1; y++) {
+      for (var x = Math.floor(px - rl) - 1; x <= Math.ceil(px + rl) + 1; x++) {
+        var dx = x - px, dy = (y - py) * aspect;
+        var u = dx * ca + dy * sa, w = -dx * sa + dy * ca;
+        if ((u * u) / (rl * rl) + (w * w) / (tw * tw) <= 1) set(g, x, y, v);
+      }
+    }
+  }
+
+  function tuantuan(rnd) {
+    var g = new Int8Array(W * H).fill(-1);
+    var cx = (W - 1) / 2, cy = H * 0.40, aspect = 0.86;
+    var twist = (rnd() - 0.5) * 0.6;
+    var n = 8;
+
+    /* 外层八瓣（与内层错半格） */
+    for (var k = 0; k < n; k++) {
+      var a2 = (k / n) * Math.PI * 2 + Math.PI / n + twist;
+      petalEllipse(g, cx + Math.cos(a2) * 12.5, cy + Math.sin(a2) * 12.5 / aspect,
+        a2, 6.2, 4.0, 2, aspect);
+    }
+    /* 外层瓣尖另起一色，取宝相花“间晕”之貌 */
+    for (var k2 = 0; k2 < n; k2++) {
+      var a3 = (k2 / n) * Math.PI * 2 + Math.PI / n + twist;
+      disc(g, cx + Math.cos(a3) * 17.6, cy + Math.sin(a3) * 17.6 / aspect, 1.5, 3, aspect);
+    }
+    /* 内层八瓣覆盖其上 */
+    for (var k3 = 0; k3 < n; k3++) {
+      var a1 = (k3 / n) * Math.PI * 2 + twist;
+      petalEllipse(g, cx + Math.cos(a1) * 6.4, cy + Math.sin(a1) * 6.4 / aspect,
+        a1, 5.0, 3.2, 1, aspect);
+    }
+    disc(g, cx, cy, 2.4, 4, aspect);
+    addWaves(g, rnd, H * 0.84);
+    return g;
+  }
+
+  /* ---------- 纹样二：缠枝莲 ---------- */
+  function lianzhi(rnd) {
+    var g = new Int8Array(W * H).fill(-1);
+    var amp = 7 + rnd() * 6, freq = 1.3 + rnd() * 1.0, ph = rnd() * Math.PI * 2;
+    var cx = (W - 1) / 2;
+
+    for (var y = 0; y < H; y++) {
+      var t = y / (H - 1);
+      var sx = cx + amp * Math.sin(freq * t * Math.PI * 2 + ph);
+      for (var x = 0; x < W; x++) {
+        if (Math.abs(x - sx) < 1.5) set(g, x, y, 1);
+      }
+    }
+    for (var i = 0; i < 4; i++) {
+      var yy = 5 + i * 13 + Math.floor(rnd() * 4);
+      if (yy >= H) continue;
+      var tt = yy / (H - 1);
+      var ss = cx + amp * Math.sin(freq * tt * Math.PI * 2 + ph);
+      var dir = (i % 2) ? 1 : -1;
+      /* 花头须收在画面内，否则会被边界裁切而失去花形 */
+      var fx = Math.max(5, Math.min(W - 6, ss + dir * (5.5 + rnd() * 3.5)));
+      for (var k = 0; k < 8; k++) {
+        var aa = (k / 8) * Math.PI * 2 + i * 0.42;
+        ellipseFill(g, fx + Math.cos(aa) * 3.1, yy + Math.sin(aa) * 3.1, 2.4, 2.4, 2);
+      }
+      disc(g, fx, yy, 2.1, 0);
+      ellipseFill(g, Math.max(4, Math.min(W - 5, ss - dir * (4.5 + rnd() * 3))), yy + 3, 3.6 + rnd() * 1.6, 2.2 + rnd() * 1.2, 3);
+    }
+    addWaves(g, rnd, H * 0.8);
+    return g;
+  }
+
+  /* ---------- 纹样三：游鱼戏藻（侧面角度，便于低分辨率成形） ---------- */
+  function jinyu(rnd) {
+    var g = new Int8Array(W * H).fill(-1);
+    var cx = Math.round((W - 1) / 2), cy = Math.round(H * 0.38);
+
+    /* 水草：自底部上扬的几缕 */
+    for (var s = 0; s < 4; s++) {
+      var bx = 4 + s * 12 + rnd() * 3;
+      for (var yw = cy + 9; yw < H; yw++) {
+        set(g, bx + Math.sin((yw - cy) * 0.26 + s * 1.7) * 2.4, yw, 3);
+      }
+    }
+
+    /* 鱼身：横向橄榄形，外深内浅 */
+    ellipseFill(g, cx - 1, cy, 13, 6.4, 1, 0.30, 0);
+    /* 头部收钝 */
+    for (var xh = Math.round(cx - 14); xh <= Math.round(cx - 10); xh++) {
+      for (var yh = Math.round(cy - 6); yh <= Math.round(cy + 6); yh++) {
+        if (g[yh * W + xh] !== -1) continue;
+        var hh = 6.4 - (cx - 10 - xh) * 1.1;
+        if (Math.abs(yh - cy) < hh) set(g, xh, yh, 1);
+      }
+    }
+    /* 尾鳍：向右张开的两片 */
+    for (var x = Math.round(cx + 10); x <= cx + 21; x++) {
+      var t = (x - (cx + 10)) / 11;
+      var sp = 1.2 + t * 6.4;
+      for (var y = Math.round(cy - sp); y <= Math.round(cy + sp); y++) {
+        if (Math.abs(Math.abs(y - cy) - sp) < 1.4) set(g, x, y, 2);
+      }
+    }
+    /* 背鳍 */
+    for (var y2 = Math.round(cy - 6); y2 >= cy - 13; y2--) {
+      var t2 = (cy - 6 - y2) / 7;
+      var hw = 4.2 * (1 - t2) + 0.6;
+      for (var x2 = Math.round(cx - 3 - hw); x2 <= Math.round(cx - 3 + hw); x2++) set(g, x2, y2, 2);
+    }
+    /* 腹鳍 */
+    for (var y3 = Math.round(cy + 6); y3 <= cy + 11; y3++) {
+      var t3 = (y3 - (cy + 6)) / 5;
+      var hw3 = 3.2 * (1 - t3) + 0.5;
+      for (var x3 = Math.round(cx + 1 - hw3); x3 <= Math.round(cx + 1 + hw3); x3++) set(g, x3, y3, 2);
+    }
+    /* 鳃线与眼 */
+    for (var y4 = cy - 4; y4 <= cy + 4; y4++) set(g, cx - 5, y4, 2);
+    disc(g, cx - 8, cy - 1, 1.2, 4);
+    addWaves(g, rnd, H * 0.86);
+    return g;
+  }
+
+  /* ---------- 纹样四：海水江崖 ---------- */
+  function shuiwen(rnd) {
+    var g = new Int8Array(W * H).fill(-1);
+    var top = H * 0.3, bands = 5;
+    for (var b = 0; b < bands; b++) {
+      var base = top + (H - top) * (b / bands);
+      var amp = 2.2 + rnd() * 2.4;
+      var k = 2 * Math.PI / (W / (1.2 + rnd() * 1.6));
+      var ph = rnd() * Math.PI * 2;
+      for (var x = 0; x < W; x++) {
+        var edge = base + amp * Math.sin(k * x + ph);
+        for (var y = Math.round(edge); y < Math.round(base + (H - top) / bands + 1.5); y++) {
+          if (y >= 0 && y < H) set(g, x, y, b % 4 === 0 ? 0 : (1 + (b % 3)));
+        }
+      }
+    }
+    /* 立水浪头 */
+    for (var s = 0; s < 3; s++) {
+      var sx2 = 8 + s * 14 + rnd() * 4;
+      for (var y4 = H * 0.86; y4 < H; y4++) {
+        var hw = 1 + (y4 - H * 0.86) * 0.5;
+        for (var x4 = Math.round(sx2 - hw); x4 <= Math.round(sx2 + hw); x4++) set(g, x4, y4, 2);
+      }
+    }
+    return g;
+  }
+
+  var BUILDERS = [
+    { id: 'tuanhua', name: '宝相团花', note: '放射对称·三层环花', fn: tuantuan },
+    { id: 'lianzhi', name: '缠枝莲', note: '藤蔓绕 riots花·左右生', fn: lianzhi },
+    { id: 'jinyu', name: '游鱼戏藻', note: '橄榄鱼身·尾鳍张立', fn: jinyu },
+    { id: 'shuiwen', name: '海水江崖', note: '层波相叠·立水浪头', fn: shuiwen }
+  ];
+
+  /* ---------- 传统缂丝 / 苏罗常用丝色 ---------- */
+  var PALETTES = [
+    { id: 'songya', name: '宋韵雅', ground: '#EFE7D6', warp: '#D6C9AC',
+      lines: ['#2F6B8F', '#5B8C51', '#D8A63D', '#A8324A', '#7A6A9B'] },
+    { id: 'yuefu', name: '乐府红', ground: '#F6EDDF', warp: '#DFD2BA',
+      lines: ['#D4537E', '#2F6B8F', '#E8A33D', '#3F7A5E', '#9C3B4E'] },
+    { id: 'biluo', name: '碧螺青', ground: '#EDEEE2', warp: '#CBD4C0',
+      lines: ['#3D7A6B', '#8FB27E', '#D9C87A', '#B0654C', '#4B6E8F'] },
+    { id: 'mojin', name: '墨缂金', ground: '#1F2230', warp: '#3A3F52',
+      lines: ['#C8A155', '#8E3B45', '#3F6B84', '#7C7A4A', '#E0D9C4'] },
+    { id: 'oufen', name: '藕粉莲', ground: '#F6ECEC', warp: '#E2CDD2',
+      lines: ['#C77B8C', '#86A6A0', '#E4B45C', '#6E5A7C', '#A9445A'] },
+    { id: 'shiqing', name: '石青霜', ground: '#E9EEF2', warp: '#C6D1DA',
+      lines: ['#25557A', '#5C8EA6', '#E0BE6B', '#8A4A3C', '#6B7B52'] }
+  ];
+
+  function build(patternId, seed) {
+    var b = BUILDERS.filter(function (p) { return p.id === patternId; })[0] || BUILDERS[0];
+    return { grid: b.fn(mulberry32(seed || 1)), meta: b };
+  }
+
+  /* 将 grid 按行切分为“梭”：每一梭 = 一行内连续的同色段（断纬的直接依据） */
+  function toRows(grid) {
+    var rows = [];
+    for (var y = 0; y < H; y++) {
+      var runs = [], cur = grid[y * W], start = 0;
+      for (var x = 1; x <= W; x++) {
+        var v = x < W ? grid[y * W + x] : -999;
+        if (v !== cur) {
+          if (cur !== -1) runs.push({ x0: start, x1: x - 1, c: cur });
+          cur = v; start = x;
+        }
+      }
+      rows.push(runs);
+    }
+    return rows;
+  }
+
+  return {
+    W: W, H: H, BUILDERS: BUILDERS, PALETTES: PALETTES,
+    build: build, toRows: toRows, rng: mulberry32
+  };
+});
+
+</script>
+<script>
+/* app.js — 《经纬二重》H5 交互逻辑
+ * 依赖 NHPattern（weave-pattern.js）。全部图形由代码绘制，无任何外部图片素材。
+ */
+(function () {
+  'use strict';
+  var P = window.NHPattern, W = P.W, H = P.H, CELL = 10;
+  var LOOMW = W * CELL, LOOMH = H * CELL;   // 460 x 580
+
+  var S = {
+    page: 0, pattern: 'tuanhua', seed: 7, palette: 0,
+    runs: [], woven: 0, auto: false, mirror: false, twist: 0.45, mode: 'tong', frame: null
+  };
+
+  function $(id) { return document.getElementById(id); }
+
+  function fit(cv, w, h, d) {
+    d = d || 2;
+    cv.width = w * d; cv.height = h * d;
+    cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    var c = cv.getContext('2d');
+    c.setTransform(d, 0, 0, d, 0, 0);
+    return c;
+  }
+
+  function rr(c, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2; if (h < 2 * r) r = h / 2;
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+    c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r);
+    c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y);
+    c.closePath();
+  }
+
+  /* ---------- 数据：把纹样展开成“梭”的序列 ---------- */
+  function buildRuns() {
+    var g = P.build(S.pattern, S.seed).grid;
+    var rows = P.toRows(g), out = [];
+    for (var y = 0; y < rows.length; y++) {
+      for (var i = 0; i < rows[y].length; i++) {
+        out.push({ row: y, x0: rows[y][i].x0, x1: rows[y][i].x1, c: rows[y][i].c });
+      }
+    }
+    S.runs = out; S.total = out.length;
+  }
+
+  /* ---------- 织机绘制 ---------- */
+  function drawLoom(c, upto, mirror, small) {
+    var pal = P.PALETTES[S.palette], k = small || 1;
+    var w = LOOMW * k, h = LOOMH * k;
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = pal.ground; c.fillRect(0, 0, w, h);
+    c.globalAlpha = 0.5; c.fillStyle = pal.warp;
+    for (var i = 0; i < W; i++) c.fillRect((i * CELL + CELL / 2 - 0.7) * k, 0, 1.4 * k, h);
+    c.globalAlpha = 1;
+    for (var j = 0; j < upto && j < S.runs.length; j++) {
+      var r = S.runs[j];
+      var x = r.x0 * CELL + 1, ww = (r.x1 - r.x0 + 1) * CELL - 2, y = r.row * CELL + 1;
+      if (mirror) x = LOOMW - x - ww;
+      var col = pal.lines[r.c % pal.lines.length];
+      c.fillStyle = col;
+      rr(c, x * k, y * k, ww * k, (CELL - 2) * k, 3 * k); c.fill();
+      c.fillStyle = 'rgba(255,255,255,.16)';
+      c.fillRect(x * k, y * k, ww * k, 1.2 * k);
+    }
+  }
+
+  /* ---------- 缩略图 ---------- */
+  /* 缩略图的梭序缓存：动画每帧重绘，不能每次都重跑 build + toRows */
+  var thumbCache = {};
+  function thumbRuns(pid, seed) {
+    var key = pid + '_' + seed;
+    if (!thumbCache[key]) {
+      var g = P.build(pid, seed).grid, rows = P.toRows(g), out = [];
+      for (var y = 0; y < rows.length; y++) {
+        for (var i = 0; i < rows[y].length; i++) {
+          out.push({ row: y, x0: rows[y][i].x0, x1: rows[y][i].x1, c: rows[y][i].c });
+        }
+      }
+      thumbCache[key] = out;
+    }
+    return thumbCache[key];
+  }
+
+  function drawThumb(cv, pid, seed, palIdx, upto) {
+    var runs = thumbRuns(pid, seed), k = 0.5;
+    var c = cv.__ctx;
+    if (!c) {
+      c = fit(cv, LOOMW * k, LOOMH * k, 2);
+      cv.__ctx = c;
+      /* 固定显示尺寸，避免四张卡片把页面撑出屏外 */
+      cv.style.width = '167px'; cv.style.height = '210px';
+    }
+    var pal = P.PALETTES[palIdx];
+    c.fillStyle = pal.ground; c.fillRect(0, 0, LOOMW * k, LOOMH * k);
+    c.globalAlpha = 0.45; c.fillStyle = pal.warp;
+    for (var i = 0; i < W; i++) c.fillRect((i * CELL + CELL / 2 - 0.6) * k, 0, 1.2 * k, LOOMH * k);
+    c.globalAlpha = 1;
+    var n = (upto === undefined) ? runs.length : Math.min(runs.length, Math.floor(upto));
+    for (var j = 0; j < n; j++) {
+      var r = runs[j];
+      c.fillStyle = pal.lines[r.c % pal.lines.length];
+      c.fillRect((r.x0 * CELL + 1) * k, (r.row * CELL + 1) * k, ((r.x1 - r.x0 + 1) * CELL - 2) * k, (CELL - 2) * k);
+    }
+  }
+
+  /* ---------- P2 释义图：通经 / 断纬 ---------- */
+  function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+
+  /* 回纬折返的示意钩 */
+  function drawHook(c, bx, k, blink) {
+    c.save();
+    c.strokeStyle = '#8E3B45'; c.lineWidth = 2 * k;
+    c.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(blink * Math.PI));
+    c.setLineDash([4 * k, 3 * k]);
+    c.beginPath();
+    c.moveTo(bx, 138 * k); c.lineTo(bx, 112 * k);
+    c.lineTo(bx + 12 * k, 112 * k); c.lineTo(bx + 12 * k, 164 * k); c.lineTo(bx, 164 * k);
+    c.stroke();
+    c.restore();
+  }
+
+  function drawDiagram(c, k, prog) {
+    k = k || 1;
+    prog = (prog === undefined) ? 1 : Math.max(0, Math.min(1, prog));
+    var w = 552 * k, h = 300 * k;
+    var pal = P.PALETTES[S.palette], cols = 12, cw = w / cols;
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = '#FFFDF7'; c.fillRect(0, 0, w, h);
+    c.fillStyle = pal.warp; c.globalAlpha = 0.85;
+    for (var i = 0; i < cols; i++) c.fillRect(i * cw + cw / 2 - 1.5 * k, 20 * k, 3 * k, 260 * k);
+    c.globalAlpha = 1;
+
+    c.textAlign = 'center';
+
+    if (S.mode === 'tong') {
+      var len = 504 * k * ease(prog);
+      if (len > 1) {
+        c.fillStyle = pal.lines[0];
+        rr(c, 24 * k, 138 * k, len, 26 * k, 8 * k); c.fill();
+      }
+      if (prog < 1) {
+        c.fillStyle = '#8E3B45';
+        c.beginPath(); c.arc(24 * k + len, 151 * k, 5.5 * k, 0, 6.2832); c.fill();
+      }
+      c.fillStyle = '#2A2723'; c.font = (15 * k) + 'px sans-serif';
+      c.fillText('一根纬线左右到头，通到底', w / 2, 196 * k);
+      c.fillStyle = '#8E3B45';
+      c.fillText('经线自始至终不断 · 通经', w / 2, 226 * k);
+    } else {
+      var segs = [[24, 150], [190, 160], [370, 158]];
+      var cs = [pal.lines[0], pal.lines[1], pal.lines[2]];
+      segs.forEach(function (s, i) {
+        var lp = Math.max(0, Math.min(1, (prog - i * 0.26) / 0.30));
+        var len = s[1] * k * ease(lp);
+        if (len > 1) {
+          c.fillStyle = cs[i];
+          rr(c, s[0] * k, 138 * k, len, 26 * k, 8 * k); c.fill();
+        }
+        if (lp >= 1 && i < segs.length - 1) drawHook(c, (s[0] + s[1] + 6) * k, k, prog * 5);
+      });
+      c.fillStyle = '#2A2723'; c.font = (15 * k) + 'px sans-serif';
+      c.fillText('纬线各走一段就折回，互不相通', w / 2, 200 * k);
+      c.fillStyle = '#8E3B45';
+      c.fillText('断纬 · 色界处遂留细缝', w / 2, 230 * k);
+    }
+  }
+
+  /* ---------- P6 苏罗绞经 ---------- */
+  /* 绞经：两根经线沿纵向正弦摆动且相位相反，周期性互绞，围出连续椒孔 */
+  function drawLuo(c, k, ph, wp) {
+    k = k || 1;
+    ph = ph || 0;
+    wp = (wp === undefined) ? 1 : Math.max(0, Math.min(1, wp));
+    var w = 552 * k, h = 300 * k;
+    c.clearRect(0, 0, w, h);
+    c.fillStyle = pal0().ground; c.fillRect(0, 0, w, h);
+    var pairs = 7, chh = 60 * k, amp = (w / pairs) * 0.20 * (0.35 + S.twist * 0.85);
+    c.lineCap = 'round';
+
+    for (var j = 0; j < pairs * 2; j++) {
+      var base = Math.floor(j / 2) * (w / pairs) + (w / pairs) * 0.5;
+      var phase = (j % 2) ? 0 : Math.PI;
+      c.strokeStyle = (j % 2) ? '#8E3B45' : '#2F6B8F';
+      c.lineWidth = 2.4 * k;
+      c.beginPath();
+      for (var y = 0; y <= h; y += 3) {
+        /* 相位随时间推进：绞转点沿纵向流动，如同经线连续互绞 */
+        var xx = base + amp * Math.sin((y / chh) * Math.PI * 2 + phase + ph);
+        if (y === 0) c.moveTo(xx, y); else c.lineTo(xx, y);
+      }
+      c.stroke();
+    }
+    /* 纬线自上而下逐条织入，锁住孔眼 */
+    c.strokeStyle = 'rgba(90,84,74,.42)'; c.lineWidth = 1.4 * k;
+    var rowsN = h / (chh / 2);
+    for (var ri = 0; ri <= rowsN; ri++) {
+      var ry = ri * (chh / 2);
+      if (ry > h * wp) break;
+      c.beginPath(); c.moveTo(0, ry); c.lineTo(w, ry); c.stroke();
+    }
+  }
+  function pal0() { return P.PALETTES[S.palette]; }
+
+  /* ---------- 页面切换 ---------- */
+  var NAMES = ['封面', '释义', '择样', '掷色', '上机', '互文', '成画'];
+  function go(i) {
+    if (i < 0 || i > 6) return;
+    S.page = i;
+    var pages = document.querySelectorAll('.page');
+    for (var k = 0; k < pages.length; k++) pages[k].classList.toggle('on', k === i);
+    var dots = $('pager').children;
+    for (var d = 0; d < dots.length; d++) dots[d].classList.toggle('act', d === i);
+    $('nav').textContent = i === 6 ? '' : NAMES[i + 1] + ' ›';
+    $('prev').textContent = i === 0 ? '' : '‹ ' + NAMES[i - 1];
+    if (i === 4) { $('loom').style.display = 'block'; drawLoom(loomCtx(), S.woven, S.mirror); }
+    if (i === 6) renderFinal();
+  }
+
+  var loomC = null, luoC = null, diaC = null;
+  function loomCtx() {
+    if (!loomC) loomC = fit($('loom'), LOOMW, LOOMH, 2);
+    return loomC;
+  }
+  function luoCtx() { if (!luoC) luoC = fit($('luo'), 552, 300, 2); return luoC; }
+  function diaCtx() { if (!diaC) diaC = fit($('diagram'), 552, 300, 2); return diaC; }
+
+  /* ================= 声音 =================
+   * BGM 由 Web Audio 实时合成：五声音阶缓行 + 织机投梭声，不使用任何网络音乐，规避版权风险。
+   * 语音讲解默认用设备内置中文语音朗读；若 AUDIO_FILE 中填入 mp3 路径，则优先播放该录音。
+   */
+  var AUDIO_FILE = { bgm: '', tong: '', duan: '' };
+
+  var NARR = {
+    tong: '通经，就是经线从上到下贯通整幅，一根到底，从不剪断。它是缂丝的骨架，也是所有纬线依附的基础。',
+    duan: '断纬，是缂丝最要紧的一刀。纬线不贯穿全幅，而是依照图稿的色区，一小段一小段地回梭，' +
+          '所以每一个颜色的交界处，都会留下一道极细的缝。行家管它叫缂缝，也是辨别真假缂丝的凭据。'
+  };
+
+  var AU = {
+    ctx: null, master: null, on: false, step: 0, timer: null, fileEl: null, manual: false,
+    init: function () {
+      if (this.ctx) return true;
+      var C = window.AudioContext || window.webkitAudioContext;
+      if (!C) return false;
+      try {
+        this.ctx = new C();
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0;
+        this.master.connect(this.ctx.destination);
+      } catch (e) { this.ctx = null; return false; }
+      return true;
+    },
+    tone: function (f, dur, type, vol) {
+      if (!this.ctx) return;
+      var t = this.ctx.currentTime, o = this.ctx.createOscillator(), g = this.ctx.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(vol, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(this.master);
+      o.start(t); o.stop(t + dur + 0.05);
+    },
+    /* 织机投梭的短促声响 */
+    clack: function () {
+      if (!this.ctx) return;
+      var c = this.ctx, len = Math.floor(c.sampleRate * 0.05);
+      var buf = c.createBuffer(1, len, c.sampleRate), dat = buf.getChannelData(0);
+      for (var i = 0; i < len; i++) dat[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+      var s = c.createBufferSource(); s.buffer = buf;
+      var g = c.createGain(); g.gain.value = 0.05;
+      var f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1700;
+      s.connect(f); f.connect(g); g.connect(this.master);
+      s.start();
+    },
+    beat: function () {
+      var sc = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+      var seq = [0, 2, 1, 3, 2, 4, 3, 5, 4, 2, 1, 0];
+      var n = sc[seq[this.step % seq.length]];
+      this.tone(n / 2, 1.7, 'sine', 0.20);
+      this.tone(n, 1.1, 'triangle', 0.09);
+      if (this.step % 4 === 0) this.clack();
+      this.step++;
+    },
+    start: function () {
+      if (!this.init()) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      var t = this.ctx.currentTime;
+      this.master.gain.cancelScheduledValues(t);
+      this.master.gain.setValueAtTime(this.master.gain.value, t);
+      this.master.gain.linearRampToValueAtTime(0.16, t + 1.2);
+      if (AUDIO_FILE.bgm) {
+        if (!this.fileEl) { this.fileEl = new Audio(AUDIO_FILE.bgm); this.fileEl.loop = true; }
+        var p = this.fileEl.play(); if (p && p.catch) p.catch(function () {});
+      }
+      var self = this;
+      if (!this.timer) this.timer = setInterval(function () { self.beat(); }, 500);
+      this.on = true;
+    },
+    stop: function () {
+      if (!this.ctx) return;
+      var t = this.ctx.currentTime;
+      this.master.gain.cancelScheduledValues(t);
+      this.master.gain.setValueAtTime(this.master.gain.value, t);
+      this.master.gain.linearRampToValueAtTime(0.0001, t + 0.4);
+      if (this.timer) { clearInterval(this.timer); this.timer = null; }
+      if (this.fileEl) this.fileEl.pause();
+      this.on = false;
+      this.hush();
+    },
+    speak: function (key) {
+      if (!this.on) return;
+      var f = AUDIO_FILE[key];
+      if (f) {
+        try { var a = new Audio(f); var p = a.play(); if (p && p.catch) p.catch(function () {}); return; }
+        catch (e) { /* 文件缺失则退回朗读 */ }
+      }
+      if (!('speechSynthesis' in window)) return;
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(NARR[key]);
+        u.lang = 'zh-CN'; u.rate = 0.92; u.pitch = 1;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    },
+    hush: function () {
+      try { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {}
+    }
+  };
+
+  /* ================= 动画调度 =================
+   * 只驱动当前所在屏的动画，离屏即停，避免无谓耗电。
+   * S.frame 为数字时锁定进度，供离线截图取中间帧。
+   */
+  var Ticker = (function () {
+    var items = [], t0 = 0;
+    function loop(now) {
+      if (!t0) t0 = now;
+      var t = (now - t0) / 1000;
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        if (it.page !== S.page) continue;
+        it.draw(S.frame === null ? t : S.frame);
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+    return { add: function (page, draw) { items.push({ page: page, draw: draw }); } };
+  })();
+
+  /* ---------- P5 织造交互 ---------- */
+  function weave(n) {
+    var before = Math.floor(S.woven);
+    S.woven = Math.max(0, Math.min(S.total, S.woven + n));
+    if (Math.floor(S.woven) !== before) {
+      drawLoom(loomCtx(), Math.floor(S.woven), S.mirror);
+      $('pbar').style.width = (S.woven / S.total * 100).toFixed(1) + '%';
+      $('pnum').textContent = Math.floor(S.woven) + ' / ' + S.total + ' 梭';
+      if (S.woven >= S.total) $('hint').textContent = '织成了 · 可翻面验看，或向下继续';
+    }
+  }
+  function bindLoom() {
+    var cv = $('loom'), last = 0, down = false;
+    cv.addEventListener('pointerdown', function (e) {
+      down = true; last = e.clientX; cv.setPointerCapture(e.pointerId);
+      $('hint').textContent = '引梭中…';
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = Math.abs(e.clientX - last); last = e.clientX;
+      weave(dx * 0.62);
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      cv.addEventListener(ev, function () { down = false; });
+    });
+    var ax = 0;
+    (function loop() {
+      if (S.auto && S.page === 4) weave(1.6);
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ---------- P7 成画 ---------- */
+  function renderFinal() {
+    var src = $('loom');
+    var fc = fit($('final'), 345, 435, 2);
+    fc.drawImage(src, 0, 0, 345, 435);
+    var url = src.toDataURL('image/png');
+    var imgs = document.querySelectorAll('#p7 .mock img');
+    for (var i = 0; i < imgs.length; i++) imgs[i].src = url;
+    $('fname').textContent = P.BUILDERS.filter(function (b) { return b.id === S.pattern; })[0].name
+      + ' · ' + pal0().name;
+  }
+
+  /* ---------- 初始化 ---------- */
+  function init() {
+    buildRuns();
+
+    /* 素材导出（供展示海报高清取图）：?export=1 织造成品 2 苏罗绞经 3 通经断纬机制 */
+    var ex = /export=(\d)/.exec(location.search);
+    if (ex) {
+      document.body.innerHTML = '';
+      document.body.style.cssText = 'margin:0;background:#fff';
+      var cv = document.createElement('canvas'), c;
+      if (+ex[1] === 1) { c = fit(cv, 1104, 1392, 1); S.woven = S.total; drawLoom(c, S.total, false, 2.4); }
+      else if (+ex[1] === 2) { c = fit(cv, 1104, 600, 1); drawLuo(c, 2); }
+      else { c = fit(cv, 1104, 600, 1); S.mode = 'duan'; drawDiagram(c, 2); }
+      document.body.appendChild(cv);
+      return;
+    }
+
+    loomCtx();
+
+    /* 择样卡片 */
+    var gs = $('picks'), pickCvs = [];
+    P.BUILDERS.forEach(function (b) {
+      var d = document.createElement('div');
+      d.className = 'card' + (b.id === S.pattern ? ' act' : '');
+      d.innerHTML = '<canvas></canvas><div class="nm">' + b.name + '</div><div class="nt">' + b.note + '</div>';
+      gs.appendChild(d);
+      pickCvs.push(d.querySelector('canvas'));
+      drawThumb(d.querySelector('canvas'), b.id, S.seed, S.palette);
+      d.onclick = function () {
+        S.pattern = b.id;
+        var cs = gs.children;
+        for (var i = 0; i < cs.length; i++) cs[i].classList.remove('act');
+        d.classList.add('act');
+        reseed();
+      };
+    });
+
+    /* 色卡 */
+    var sw = $('sws');
+    P.PALETTES.forEach(function (p, i) {
+      var d = document.createElement('div');
+      d.className = 'sw' + (i === S.palette ? ' act' : '');
+      var bar = p.lines.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join('');
+      d.innerHTML = '<div class="bar">' + bar + '</div><div class="nm">' + p.name + '</div>';
+      sw.appendChild(d);
+      d.onclick = function () {
+        S.palette = i;
+        var cs = sw.children;
+        for (var k = 0; k < cs.length; k++) cs[k].classList.remove('act');
+        d.classList.add('act');
+        recolor();
+      };
+    });
+
+    /* 释义开关 */
+    var tg = $('tog').children;
+    for (var t = 0; t < tg.length; t++) {
+      (function (idx) {
+        tg[idx].onclick = function () {
+          S.mode = idx === 0 ? 'tong' : 'duan';
+          for (var q = 0; q < tg.length; q++) tg[q].classList.toggle('act', q === idx);
+          AU.speak(S.mode);
+        };
+      })(t);
+    }
+
+    /* 翻页器 */
+    var pg = $('pager');
+    for (var i = 0; i < 7; i++) { var e = document.createElement('i'); if (i === 0) e.className = 'act'; pg.appendChild(e); }
+    $('nav').onclick = function () { go(Math.min(6, S.page + 1)); };
+    $('prev').onclick = function () { go(Math.max(0, S.page - 1)); };
+
+    /* 按钮 */
+    $('btnReseed').onclick = reseed;
+    $('btnCast').onclick = function () {
+      S.palette = Math.floor(Math.random() * P.PALETTES.length);
+      var cs = sw.children;
+      for (var k = 0; k < cs.length; k++) cs[k].classList.toggle('act', k === S.palette);
+      recolor();
+    };
+    $('btnAuto').onclick = function () {
+      S.auto = !S.auto;
+      this.textContent = S.auto ? '停手' : '替我织';
+      if (S.auto) $('hint').textContent = '自动织造中…';
+    };
+    $('btnFlip').onclick = function () {
+      var cv = $('loom');
+      cv.style.transition = 'transform .28s ease';
+      cv.style.transform = 'rotateY(90deg)';
+      setTimeout(function () {
+        S.mirror = !S.mirror;
+        drawLoom(loomCtx(), Math.floor(S.woven), S.mirror);
+        cv.style.transform = 'rotateY(0deg)';
+        $('hint').textContent = S.mirror ? '背面 · 双面同纹，此缂丝之所以为缂丝' : '正面';
+        renderFinal();
+      }, 290);
+    };
+    $('btnReset').onclick = function () { resetLoom(); renderFinal(); };
+    $('btnSave').onclick = function () {
+      var a = document.createElement('a');
+      a.href = $('loom').toDataURL('image/png');
+      a.download = '经纬二重-' + S.pattern + '.png';
+      a.click();
+    };
+    $('btnAgain').onclick = function () { reseed(); go(2); };
+
+    /* 苏罗拖动 */
+    var lv = $('luo'), ld = false;
+    lv.addEventListener('pointerdown', function (e) { ld = true; lv.setPointerCapture(e.pointerId); });
+    lv.addEventListener('pointermove', function (e) {
+      if (!ld) return;
+      var r = lv.getBoundingClientRect();
+      S.twist = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      $('luoTxt').textContent = S.twist < 0.35 ? '绞转松弛 · 椒孔舒张，罗面轻透'
+        : (S.twist > 0.7 ? '绞转紧密 · 椒孔收敛，罗面致密' : '半绞 · 孔眼匀停');
+    });
+    lv.addEventListener('pointerup', function () { ld = false; });
+
+    bindLoom();
+    drawLoom(loomCtx(), 0, false);
+
+    /* ---- 动画：P2 释义 / P3 择样（四样由空到满）/ P6 苏罗（绞转流动） ---- */
+    /* ?still=1 为静态满幅模式：不注册动画，用于海报取图与省电降级 */
+    if (/still=1/.test(location.search)) {
+      drawDiagram(diaCtx(), 1, 1);
+      P.BUILDERS.forEach(function (b, idx) { drawThumb(pickCvs[idx], b.id, S.seed, S.palette); });
+      drawLuo(luoCtx(), 1, 0, 1);
+    } else
+    Ticker.add(1, function (t) {
+      drawDiagram(diaCtx(), 1, Math.min(1, ((t % 4.2) / 4.2) / 0.8));
+    });
+    P.BUILDERS.forEach(function (b, idx) {
+      Ticker.add(2, function (t) {
+        var p = ((t + idx * 0.7) % 6.2) / 6.2;
+        drawThumb(pickCvs[idx], b.id, S.seed, S.palette,
+          Math.min(1, p / 0.86) * thumbRuns(b.id, S.seed).length);
+      });
+    });
+    Ticker.add(5, function (t) {
+      drawLuo(luoCtx(), 1, t * 1.1, Math.min(1, ((t % 5.2) / 5.2) / 0.85));
+    });
+
+    /* ---- 声音：右上角开关；首次触摸自动起播（移动端禁止无手势播放音频） ---- */
+    var snd = $('sound');
+    snd.onclick = function (e) {
+      e.stopPropagation();
+      AU.manual = true;
+      if (AU.on) { AU.stop(); snd.className = 'off'; }
+      else { AU.start(); snd.className = AU.on ? '' : 'off'; }
+    };
+    var kick = function (e) {
+      if (e && e.target && e.target.id === 'sound') return;
+      if (!AU.manual && !AU.on) {
+        AU.start();
+        snd.className = AU.on ? '' : 'off';
+      }
+      document.removeEventListener('pointerdown', kick);
+    };
+    document.addEventListener('pointerdown', kick);
+
+    /* 调试/截图用：?static=1 关闭过渡，?full=1 直接织满，#pN 直跳第 N 屏 */
+    if (/static=1/.test(location.search)) document.body.classList.add('nost');
+    var fm = /frame=([\d.]+)/.exec(location.search);
+    if (fm) S.frame = parseFloat(fm[1]);   /* 锁定动画进度，供离线截图取中间帧 */
+    if (/full=1/.test(location.search)) {
+      S.woven = S.total;
+      drawLoom(loomCtx(), S.total, false);
+      $('pbar').style.width = '100%';
+      $('pnum').textContent = S.total + ' / ' + S.total + ' 梭';
+      $('hint').textContent = '织成了 · 可翻面验看，或向下继续';
+    }
+    var m = /^#p(\d)$/.exec(location.hash);
+    go(m ? Math.min(6, Math.max(0, +m[1] - 1)) : 0);
+    if (/after=reset/.test(location.search)) { resetLoom(); go(4); }
+  }
+
+  /* 清空织面：必须强制重绘，不能只置零计数（weave() 在前后值相同时不重绘） */
+  function resetLoom() {
+    S.woven = 0; S.auto = false; S.mirror = false;
+    $('btnAuto').textContent = '替我织';
+    $('loom').style.transform = 'rotateY(0deg)';
+    drawLoom(loomCtx(), 0, false);
+    $('pbar').style.width = '0%';
+    $('pnum').textContent = '0 / ' + S.total + ' 梭';
+    $('hint').textContent = '按住画布横向拖动，引梭织入';
+  }
+
+  function reseed() {
+    S.seed = 3 + Math.floor(Math.random() * 900);
+    buildRuns();
+    resetLoom();
+  }
+
+  function recolor() {
+    drawLoom(loomCtx(), Math.floor(S.woven), S.mirror);
+  }
+
+  /* 视口适配：640x1008 设计稿整体等比缩放 */
+  function resize() {
+    var s = Math.min(window.innerWidth / 640, window.innerHeight / 1008);
+    $('stage').style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', resize);
+
+  window.addEventListener('DOMContentLoaded', function () { init(); resize(); });
+  window.__JW = { go: go, S: S };
+})();
+
+</script>
+</body>
+</html>
