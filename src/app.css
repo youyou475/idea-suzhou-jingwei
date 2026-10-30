@@ -1,0 +1,131 @@
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: #F7F2E8;
+  overflow: hidden;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #2A2723;
+  user-select: none;
+}
+
+#wrap { position: absolute; inset: 0; overflow: hidden; background: #F7F2E8; }
+
+/* 舞台绝对定位于左上角，由 JS 计算 translate + scale 居中，
+   避免 640px 布局宽度在窄屏溢出容器导致居中失效、右侧被切 */
+#stage {
+  position: absolute;
+  left: 0; top: 0;
+  width: 640px; height: 1008px;
+  transform-origin: 0 0;
+  background: #F7F2E8;
+  overflow: hidden;
+}
+
+/* 纸面经线底纹 */
+#stage::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 1px, transparent 1px 9px);
+  pointer-events: none;
+}
+
+.page {
+  position: absolute; inset: 0;
+  opacity: 0; pointer-events: none;
+  transition: opacity .5s ease;
+  display: flex; flex-direction: column;
+  padding: 52px 44px 96px;
+}
+.page.on { opacity: 1; pointer-events: auto; }
+body.nost .page { transition: none; }
+
+.serif { font-family: "Songti SC", "STSong", "SimSun", serif; }
+
+.kicker { font-size: 15px; letter-spacing: .34em; color: #9A9184; margin-bottom: 14px; }
+h1 { font-size: 46px; font-weight: 600; letter-spacing: .1em; line-height: 1.15; }
+h2 { font-size: 30px; font-weight: 600; letter-spacing: .06em; margin-bottom: 6px; }
+.sub { font-size: 17px; color: #7A7266; line-height: 1.7; letter-spacing: .04em; }
+.rule { width: 46px; height: 2px; background: #8E3B45; margin: 18px 0 22px; }
+
+/* 封面 */
+#p1 { justify-content: center; align-items: center; text-align: center; padding-bottom: 52px; }
+#p1 .vtitle { writing-mode: vertical-rl; font-size: 68px; letter-spacing: .22em; margin-bottom: 26px; }
+#p1 .quote { font-size: 19px; color: #8E3B45; letter-spacing: .18em; margin-top: 10px; }
+#p1 .meta { position: absolute; bottom: 54px; font-size: 14px; color: #A79E90; letter-spacing: .2em; }
+
+/* 释义页 */
+.toggle { display: flex; border: 1px solid #DCD4C4; border-radius: 26px; overflow: hidden; width: 300px; margin: 8px 0 20px; }
+.toggle div { flex: 1; text-align: center; padding: 11px 0; font-size: 17px; color: #8A8274; cursor: pointer; }
+.toggle div.act { background: #2A2723; color: #F7F2E8; }
+.diagram { width: 552px; height: 300px; background: #FFFDF7; border: 1px solid #DCD3C1; border-radius: 6px; }
+.note { margin-top: 20px; font-size: 17px; line-height: 1.8; color: #5C564C; }
+.note b { color: #8E3B45; font-weight: 600; }
+
+/* 择样 / 掷色 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+.card { background: #FFFDF7; border: 1px solid #E7E0D2; border-radius: 8px; padding: 10px; cursor: pointer; }
+.card.act { border-color: #8E3B45; }
+.card canvas { display: block; margin: 0 auto; border-radius: 4px; }
+.card .nm { font-size: 17px; margin-top: 8px; }
+.card .nt { font-size: 13px; color: #9A9184; margin-top: 2px; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 8px; }
+.sw { width: 92px; border: 1px solid transparent; border-radius: 6px; padding: 5px; cursor: pointer; }
+.sw.act { border-color: #2A2723; border-width: 2px; }
+.sw .bar { display: flex; height: 34px; border-radius: 4px; overflow: hidden; }
+.sw .bar i { flex: 1; }
+.sw .nm { font-size: 14px; text-align: center; margin-top: 6px; color: #6E675C; }
+
+/* 织造页 */
+#p5 { padding-bottom: 88px; }
+#loom { width: 460px; height: 580px; margin: 0 auto; display: block; background: #FFFDF7; border: 1px solid #DCD3C1; border-radius: 6px; touch-action: none; cursor: ew-resize; }
+.prow { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+.pbar { flex: 1; height: 6px; background: #E3DBC9; border-radius: 3px; overflow: hidden; }
+.pbar i { display: block; height: 100%; width: 0; background: #8E3B45; transition: width .12s linear; }
+.pnum { font-size: 15px; color: #7A7266; min-width: 92px; text-align: right; }
+.hint { margin-top: 12px; font-size: 16px; color: #8A8274; text-align: center; letter-spacing: .06em; }
+
+/* 苏罗页 */
+#p6 #luo { width: 552px; height: 300px; background: #FFFDF7; border: 1px solid #DCD3C1; border-radius: 6px; touch-action: none; }
+.quote2 { margin-top: 16px; padding: 14px 16px; border-left: 3px solid #8E3B45; background: rgba(142,59,69,.05); font-size: 16px; line-height: 1.75; color: #5C564C; }
+.quote2 .src { display: block; margin-top: 8px; font-size: 13px; color: #9A9184; }
+
+/* 成画页 */
+#p7 #final { width: 345px; height: 435px; margin: 0 auto; display: block; background: #FFFDF7; border: 1px solid #DCD3C1; border-radius: 4px; }
+.mock { display: flex; gap: 14px; margin-top: 14px; }
+.mock div { flex: 1; }
+.mock .box { height: 116px; background: #EFE8D8; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.mock .box img { max-width: 86%; max-height: 86%; object-fit: contain; }
+.mock .box.round { border-radius: 999px; }
+.mock .box.round img { border-radius: 999px; max-width: 78%; max-height: 78%; }
+.mock p { font-size: 14px; text-align: center; color: #7A7266; margin-top: 8px; }
+
+/* 按钮 */
+.btn {
+  display: inline-block; padding: 13px 30px; font-size: 17px; letter-spacing: .12em;
+  border: 1px solid #2A2723; border-radius: 30px; cursor: pointer; background: transparent; color: #2A2723;
+}
+.btn.solid { background: #2A2723; color: #F7F2E8; }
+.btn:active { opacity: .7; }
+.btnrow { display: flex; gap: 12px; margin-top: 16px; }
+
+/* 翻页器 */
+#pager { position: absolute; left: 0; right: 0; bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 8px; z-index: 5; }
+#pager i { width: 7px; height: 7px; border-radius: 50%; background: #C9C0AE; display: block; }
+#pager i.act { background: #8E3B45; width: 20px; border-radius: 4px; }
+#nav { position: absolute; bottom: 26px; right: 30px; font-size: 15px; color: #A79E90; z-index: 5; cursor: pointer; }
+#prev { position: absolute; bottom: 26px; left: 30px; font-size: 15px; color: #A79E90; z-index: 5; cursor: pointer; }
+#nav:empty, #prev:empty { display: none; }
+#nav:active, #prev:active { color: #8E3B45; }
+
+#sound {
+  position: absolute; top: 26px; right: 30px; z-index: 6; cursor: pointer;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid #DCD4C4; background: rgba(255, 253, 247, .78);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: #2A2723;
+}
+#sound.off { color: #B9B0A0; text-decoration: line-through; }
+
+.foot { position: absolute; bottom: 30px; left: 44px; font-size: 13px; color: #B3AA9B; letter-spacing: .14em; }
